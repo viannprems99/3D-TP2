@@ -4,10 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
@@ -32,7 +35,7 @@ public class TP2 {
      */
     public TP2() {
         // Set the aplication window :
-        frame = new JFrame("3iL - Graphic interfaces & 3D - TP1");
+        frame = new JFrame("3iL - Graphic interfaces & 3D - TP2");
         frame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -56,7 +59,7 @@ public class TP2 {
         });
         helpMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "This is the TP1 about Java and Swing.");
+                JOptionPane.showMessageDialog(frame, "This is the TP2 about Java and OpenGL.");
             }
         });
 
@@ -70,9 +73,24 @@ public class TP2 {
         JButton rotateButton = new JButton("Start/Stop rotation");
         lateralMenu.add(rotateButton);
 
+        //Set comboBox
+        Object[] elements = new Object[]{"Carré","Triangle","Cube"};
+        JComboBox comboBox = new JComboBox(elements);
+        lateralMenu.add(comboBox);
+
+        //Set liste des objets
+        ArrayList<GLEventListener> liste = new ArrayList<GLEventListener>();
+
+        //Canvas
+        Cube c = new Cube();
+        Square s = new Square();
+        Triangle t = new Triangle();
+
         // Set the OpenGL zone :
+        
         GLCanvas canvas = new GLCanvas();
-        canvas.addGLEventListener(new Triangle());
+        canvas.addGLEventListener(c);
+        liste.add(c);
         canvas.requestFocus();
         frame.add(canvas, BorderLayout.CENTER);
         
@@ -87,6 +105,33 @@ public class TP2 {
                     animator.stop();
                 } else {
                     animator.start();
+                }
+            }
+        });
+
+        // Set listeners on lateral comboBox :
+        comboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+                if ((String)comboBox.getSelectedItem() == "Carré") {
+                    canvas.removeGLEventListener((liste.get(liste.size()-1)));
+                    
+                    canvas.addGLEventListener(s);
+                    //canvas.repaint();
+                    canvas.requestFocus();
+                    frame.add(canvas, BorderLayout.CENTER);
+                } else if ((String)comboBox.getSelectedItem() == "Triangle") {
+                    canvas.removeGLEventListener((liste.get(liste.size()-1)));
+                    canvas.addGLEventListener(t);
+                    //canvas.repaint();
+                    canvas.requestFocus();
+                    frame.add(canvas, BorderLayout.CENTER);
+                } else if ((String)comboBox.getSelectedItem() == "Cube") {
+                    canvas.removeGLEventListener((liste.get(liste.size()-1)));
+                    canvas.addGLEventListener(c);
+                    //canvas.repaint();
+                    canvas.requestFocus();
+                    frame.add(canvas, BorderLayout.CENTER);
                 }
             }
         });
